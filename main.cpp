@@ -12,7 +12,7 @@
 
 using namespace seqan;
 
-int main(int, char const **)
+int main(int n, char *params[])
 {
 
   bool *pattern;
@@ -23,37 +23,42 @@ int main(int, char const **)
     
   String<Dna5> transformee;
 
-  std::string patternString="_#_#_###_#__#";
+  if(n==2){
+    std::string patternString=params[1];
     
-  pattern=(bool *)malloc(4*sizeof(bool));
+    pattern=(bool *)malloc(4*sizeof(bool));
 
-  setStartMark();
-  patternFinalSize=convertPattern(patternString,pattern);
-  patternSize = patternString.length();
-  setEndMark();
-  std::cout << "pattern converti : "<< patternSize << " (final size : "<< patternFinalSize << ")"<< std::endl;
-  displayDuration(); 
+    setStartMark();
+    patternFinalSize=convertPattern(patternString,pattern);
+    patternSize = patternString.length();
+    setEndMark();
+    std::cout << "pattern converti : "<< patternSize << " (final size : "<< patternFinalSize << ")"<< std::endl;
+    displayDuration(); 
 
-  setStartMark();
-  transformSequence(pattern,patternSize,patternFinalSize,genome,&transformee);
-  setEndMark();
-  std::cout << "sequence transformee : "<< length(transformee) << std::endl;
-  displayDuration();
+    setStartMark();
+    transformSequence(pattern,patternSize,patternFinalSize,genome,&transformee);
+    setEndMark();
+    std::cout << "sequence transformee : "<< length(transformee) << std::endl;
+    displayDuration();
 
 
-  setStartMark();
-  Index<String<Dna5> ,FMIndex<> > index(transformee);
-  indexCreate(index);
-  setEndMark();
-  std::cout << "sequence indexee" << std::endl;
-  displayDuration();
+    setStartMark();
+    Index<String<Dna5> ,FMIndex<> > index(transformee);
+    indexCreate(index);
+    setEndMark();
+    std::cout << "sequence indexee" << std::endl;
+    displayDuration();
   
 
-  Finder<Index<String<Dna5>,FMIndex<> > > finder(index);
-  std::cout << "pattern trouve aux position :"; 
-  while (find(finder, "TTAATTAATTAA"))
-    std::cout << position(finder) << " ";
-  std::cout << std::endl;
+    Finder<Index<String<Dna5>,FMIndex<> > > finder(index);
+    std::cout << "pattern trouve aux position :"; 
+    while (find(finder, "TTAATTAATTAA"))
+      std::cout << position(finder) << " ";
+    std::cout << std::endl;
+  }
+  else{
+    std::cout << "veuillez passer le pattern en paramètre (exemple '##_')" << std::endl;
+  }
 
   return 0;
 }
