@@ -26,7 +26,7 @@ int transformSequence(bool *pattern,int patternSize,int patternFinalSize, String
   unsigned i,size;
 
   size=length(sequence);  
-  reserve(transformee,patternFinalSize*size);
+  reserve(transformee,size);
 
   for(i = 0; i < size; ++i){
     if(pattern[i%patternSize])*transformee+=sequence[i%size];
@@ -41,7 +41,7 @@ int transformSequence(bool *pattern,int patternSize,int patternFinalSize, String
   }
   std::cout << "taille transformee avec ajout N : " << length(*transformee) << std::endl; 
   size=length(sequence);
-  reserve(transformee,patternFinalSize*size);
+  reserve(transformee,size);
 
   for(; i < size*patternFinalSize; ++i){
     if(pattern[i%patternSize])*transformee+=sequence[i%size];
@@ -50,11 +50,11 @@ int transformSequence(bool *pattern,int patternSize,int patternFinalSize, String
   return i;
 }
 
-int transformSequenceToDouble(bool *pattern,int patternSize,int patternFinalSize, String<Dna5> sequence,String<double> *transformee){
+int transformSequenceToInt(bool *pattern,int patternSize,int patternFinalSize, String<Dna5> sequence,String<long int> *transformee){
   unsigned i,size;
 
-  if(patternFinalSize>21){
-    std::cout<<"impossible d'encoder le resultat sur un double"<<std::endl;
+  if(patternFinalSize>8){
+    std::cout<<"impossible d'encoder le resultat sur un long int"<<std::endl;
     return -1;
   }
   else{
@@ -65,11 +65,12 @@ int transformSequenceToDouble(bool *pattern,int patternSize,int patternFinalSize
 
     for(i = 0; i < size; ++i){
       if(pattern[i%patternSize]){
-	tmp+=(ordValue(sequence[i%size]) * (3*offset) ) ;
+	tmp+=(ordValue(sequence[i%size]) << (3*offset) ) ;
 	offset++;
 	if(offset==patternFinalSize){
 	  offset=0;
 	  appendValue(*transformee,tmp);
+	  tmp=0;
 	}
       }
     }
@@ -79,11 +80,12 @@ int transformSequenceToDouble(bool *pattern,int patternSize,int patternFinalSize
       sequence+='N';
       size++;
       if(pattern[i%patternSize]){
-	tmp+=(ordValue(sequence[i%size]) * (3*offset) ) ;
+	tmp+=(ordValue(sequence[i%size]) << (3*offset) ) ;
 	offset++;
 	if(offset==patternFinalSize){
 	  offset=0;
 	  appendValue(*transformee,tmp);
+	  tmp=0;
 	}
       }
       i++;
@@ -94,11 +96,12 @@ int transformSequenceToDouble(bool *pattern,int patternSize,int patternFinalSize
 
     for(; i < size*patternFinalSize; ++i){
       if(pattern[i%patternSize]){
-	tmp+=(ordValue(sequence[i%size]) * (3*offset) ) ;
+	tmp+=(ordValue(sequence[i%size]) << (3*offset) ) ;
 	offset++;
 	if(offset==patternFinalSize){
 	  offset=0;
 	  appendValue(*transformee,tmp);
+	  tmp=0;
 	}
       }
     } 

@@ -21,12 +21,12 @@ int main(int n, char *params[])
   // Build reads and genomes
   String<Dna5> genome = readFasFile("meningitidis_M01-240149.fas");
     
-  String<Dna5> transformee;
+  String<long int> transformee;
 
   if(n==2){
     std::string patternString=params[1];
     
-    pattern=(bool *)malloc(4*sizeof(bool));
+    pattern=(bool *)malloc(patternString.length()*sizeof(bool));
 
     setStartMark();
     patternFinalSize=convertPattern(patternString,pattern);
@@ -36,25 +36,35 @@ int main(int n, char *params[])
     displayDuration(); 
 
     setStartMark();
-    transformSequence(pattern,patternSize,patternFinalSize,genome,&transformee);
+    transformSequenceToInt(pattern,patternSize,patternFinalSize,genome,&transformee);
     setEndMark();
     std::cout << "sequence transformee : "<< length(transformee) << std::endl;
     displayDuration();
 
+    String<long int> test;
+    
+    resize(test,3);
 
+    test[0]=1;
+    test[1]=2;
+    test[2]=3;
+
+    
     setStartMark();
-    Index<String<Dna5> ,FMIndex<> > index(transformee);
+    Index<String<long int> ,FMIndex<> > index(test);
     indexCreate(index);
     setEndMark();
     std::cout << "sequence indexee" << std::endl;
     displayDuration();
+    
   
-
-    Finder<Index<String<Dna5>,FMIndex<> > > finder(index);
+    /*
+    Finder<Index<String<long int>,FMIndex<> > > finder(index);
     std::cout << "pattern trouve aux position :"; 
-    while (find(finder, "TTAATTAATTAA"))
+    while (find(finder, 0))
       std::cout << position(finder) << " ";
     std::cout << std::endl;
+    */
   }
   else{
     std::cout << "veuillez passer le pattern en paramètre (exemple '##_')" << std::endl;
