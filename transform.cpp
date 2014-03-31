@@ -22,35 +22,41 @@ int convertPattern(std::string pattern,bool *ret){
   return length;
 }
 
-int transformSequence(bool *pattern,int patternSize,int patternFinalSize, String<Dna5> sequence,String<Dna5> *transformee){
+template <typename T> int transformSequence(bool *pattern,int patternSize,int patternFinalSize, String<Dna> sequence,T *transformee){
+  std::cout << "type non géré" << std::endl;
+  return -1;
+}
+
+
+template <> int transformSequence<String<Dna> >(bool *pattern,int patternSize,int patternFinalSize, String<Dna> sequence,String<Dna> *transformee){
   unsigned i,size;
+  int cpt=0;
 
-  size=length(sequence);  
-  reserve(transformee,size);
-
-  for(i = 0; i < size; ++i){
-    if(pattern[i%patternSize])*transformee+=sequence[i%size];
-  }
-
-  std::cout << "taille tranformee 1er passage : " << length(*transformee) << std::endl; 
-  while(pgcd((unsigned int)patternSize,(unsigned int)i%patternSize)!=1){
-    sequence+='N';
-    size++;
-    if(pattern[i%patternSize])*transformee+=sequence[i%size];
-    i++;
-  }
-  std::cout << "taille transformee avec ajout N : " << length(*transformee) << std::endl; 
   size=length(sequence);
-  reserve(transformee,size);
 
-  for(; i < size*patternFinalSize; ++i){
-    if(pattern[i%patternSize])*transformee+=sequence[i%size];
+  std::cout << "taille sequence avant ajout A : " << length(sequence) << std::endl; 
+
+  while(pgcd((unsigned int)patternSize,(unsigned int)size)!=1){
+    sequence+='A';
+    size++;
+  }
+  std::cout << "taille sequence avec ajout A : " << length(sequence) << std::endl; 
+
+  reserve(transformee,size*patternFinalSize);
+
+  for(i=0; i < size*patternSize; ++i){
+    if(pattern[i%patternSize]){
+      *transformee+=sequence[i%size];
+      cpt++;
+    }
   } 
   std::cout << "taille finale transformee : " << length(*transformee) << std::endl; 
   return i;
 }
 
-int transformSequenceToInt(bool *pattern,int patternSize,int patternFinalSize, String<Dna5> sequence,String<long int> *transformee){
+
+
+template <> int transformSequence<String<uint16_t> >(bool *pattern,int patternSize,int patternFinalSize, String<Dna> sequence,String<uint16_t> *transformee){
   unsigned i,size;
 
   if(patternFinalSize>8){
@@ -59,44 +65,23 @@ int transformSequenceToInt(bool *pattern,int patternSize,int patternFinalSize, S
   }
   else{
     size=length(sequence);  
-    reserve(transformee,patternFinalSize*size);
+
     int offset=0;
     double tmp=0;
 
-    for(i = 0; i < size; ++i){
-      if(pattern[i%patternSize]){
-	tmp+=(ordValue(sequence[i%size]) << (3*offset) ) ;
-	offset++;
-	if(offset==patternFinalSize){
-	  offset=0;
-	  appendValue(*transformee,tmp);
-	  tmp=0;
-	}
-      }
-    }
+    std::cout << "taille sequence avant ajout A : " << length(sequence) << std::endl; 
 
-    std::cout << "taille tranformee 1er passage : " << length(*transformee) << std::endl; 
-    while(pgcd((unsigned int)patternSize,(unsigned int)i%patternSize)!=1){
-      sequence+='N';
+    while(pgcd((unsigned int)patternSize,(unsigned int)length(sequence)%patternSize)!=1){
+      sequence+='A';
       size++;
-      if(pattern[i%patternSize]){
-	tmp+=(ordValue(sequence[i%size]) << (3*offset) ) ;
-	offset++;
-	if(offset==patternFinalSize){
-	  offset=0;
-	  appendValue(*transformee,tmp);
-	  tmp=0;
-	}
-      }
-      i++;
     }
     std::cout << "taille transformee avec ajout N : " << length(*transformee) << std::endl; 
     size=length(sequence);
     reserve(transformee,patternFinalSize*size);
 
-    for(; i < size*patternFinalSize; ++i){
+    for(i=0; i < size*patternSize; ++i){
       if(pattern[i%patternSize]){
-	tmp+=(ordValue(sequence[i%size]) << (3*offset) ) ;
+	tmp+=(ordValue(sequence[i%size]) << (2*offset) ) ;
 	offset++;
 	if(offset==patternFinalSize){
 	  offset=0;
