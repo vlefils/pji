@@ -15,8 +15,8 @@ using namespace seqan;
 int main(int n, char *params[])
 {
 
-  bool *pattern;
-  int patternSize,patternFinalSize;
+  String<bool> pattern;
+  Size<CharString>::Type patternSize,patternFinalSize;
 
   // Build reads and genomes
   String<Dna> genome = readFasFile("meningitidis_M01-240149.fas");
@@ -24,19 +24,19 @@ int main(int n, char *params[])
   String<uint16_t> transformee;
 
   if(n==2){
-    std::string patternString=params[1];
+    CharString patternString=params[1];
     
-    pattern=(bool *)malloc(patternString.length()*sizeof(bool));
+    resize(pattern,4);
 
     setStartMark();
     patternFinalSize=convertPattern(patternString,pattern);
-    patternSize = patternString.length();
+    patternSize = length(patternString);
     setEndMark();
     std::cout << "pattern converti : "<< patternSize << " (final size : "<< patternFinalSize << ")"<< std::endl;
     displayDuration(); 
 
     setStartMark();
-    transformSequence<String<uint16_t> >(pattern,patternSize,patternFinalSize,genome,&transformee);
+    transformSequence<String<uint16_t> >(pattern,patternSize,patternFinalSize,genome, transformee);
     setEndMark();
     std::cout << "sequence transformee : "<< length(transformee) << std::endl;
     displayDuration();
@@ -68,4 +68,3 @@ int main(int n, char *params[])
 
   return 0;
 }
-
