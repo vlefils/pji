@@ -26,7 +26,7 @@ int main(int n, char *params[])
   if(n==2){
     CharString patternString=params[1];
     
-    resize(pattern,4);
+    resize(pattern,length(patternString));
 
     setStartMark();
     patternFinalSize=convertPattern(patternString,pattern);
@@ -51,14 +51,13 @@ int main(int n, char *params[])
  
     Finder<Index<String<uint16_t>,FMIndex<> > > finder(index);
     String<uint16_t> seed;
-    appendValue(seed,34);
-    appendValue(seed,27);
+    appendValue(seed,8);
     appendValue(seed,12);
 
     
     std::cout << "pattern trouve aux position :"; 
     while (find(finder,seed))
-      std::cout << position(finder) << " ";
+      std::cout << getPosition(length(genome),patternFinalSize,position(finder)) << " ";
     std::cout << std::endl;
     
   }

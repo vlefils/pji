@@ -79,7 +79,7 @@ template <> Size<DnaString>::Type transformSequence<String<uint16_t> >(String<bo
       appendValue(sequence,'A');
       size++;
     }
-    std::cout << "taille transformee avec ajout N : " << length(transformee) << std::endl;
+    std::cout << "taille transformee avec ajout N : " << length(sequence) << std::endl;
     size=length(sequence);
     
     reserve(transformee,patternFinalSize*size);
@@ -98,6 +98,10 @@ template <> Size<DnaString>::Type transformSequence<String<uint16_t> >(String<bo
     std::cout << "taille finale transformee : " << length(transformee) << std::endl;
     return i;
   }
+}
+
+int getPosition(Size<CharString>::Type patternSize,Size<DnaString>::Type textSize,int position){
+  return ((position*patternSize) % textSize);
 }
 
 /*TODO : ne peux tu pas faire une fonction générique :
