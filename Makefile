@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -Wall -O2
+CFLAGS = -Wall -O3 -std=c++11
 EXEC_NAME = main
 INCLUDES = -I./include/
 LIBS = -lrt

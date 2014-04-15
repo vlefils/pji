@@ -36,13 +36,10 @@ template <> Size<DnaString>::Type transformSequence<DnaString >(String<bool> con
 
   size=length(sequence);
 
-  std::cout << "taille sequence avant ajout A : " << length(sequence) << std::endl;
-
   while(pgcd(patternSize,size)!=1){
     appendValue(sequence,'A');
     size++;
   }
-  std::cout << "taille sequence avec ajout A : " << length(sequence) << std::endl;
 
   reserve(transformee,size*patternFinalSize);
 
@@ -52,7 +49,6 @@ template <> Size<DnaString>::Type transformSequence<DnaString >(String<bool> con
       cpt++;
     }
   }
-  std::cout << "taille finale transformee : " << length(transformee) << std::endl;
   return i;
 }
 
@@ -70,16 +66,14 @@ template <> Size<DnaString>::Type transformSequence<String<uint16_t> >(String<bo
   else{
     size=length(sequence);
 
-    Value<String<uint16_t> >::Type offset=0;
+    Size<String<uint16_t> >::Type offset=0;
     Value<String<uint16_t> >::Type tmp=0;
 
-    std::cout << "taille sequence avant ajout A : " << length(sequence) << std::endl;
 
     while(pgcd(patternSize,length(sequence)%patternSize)!=1){
       appendValue(sequence,'A');
       size++;
     }
-    std::cout << "taille transformee avec ajout N : " << length(sequence) << std::endl;
     size=length(sequence);
     
     reserve(transformee,patternFinalSize*size);
@@ -95,13 +89,48 @@ template <> Size<DnaString>::Type transformSequence<String<uint16_t> >(String<bo
 	}
       }
     }
-    std::cout << "taille finale transformee : " << length(transformee) << std::endl;
     return i;
   }
 }
 
 int getPosition(Size<CharString>::Type patternSize,Size<DnaString>::Type textSize,int position){
   return ((position*patternSize) % textSize);
+}
+
+template <typename T> T applyPattern(String<Dna> genome,String<bool> pattern,int patternFinalSize){
+  std::cout<< "type non géré" << std::endl; 
+}
+
+
+template <> String<Dna> applyPattern<String<Dna> >(String<Dna> genome,String<bool> pattern,int patternFinalSize){
+  Size<String<Dna> >::Type i;
+  String<Dna> result;
+
+  for(i=0;i<length(genome);++i){
+    if (pattern[i]) result+=genome[i];
+  }
+
+}
+
+template <> String<uint16_t> applyPattern<String<uint16_t> >(String<Dna> genome,String<bool> pattern,int patternFinalSize){
+  Size<String<uint16_t> >::Type i;
+  String<uint16_t> result;
+  Value<String<uint16_t> >::Type tmp=0;
+  int shift=0;
+
+  for(i=0;i<length(genome);++i){
+    if (pattern[i%length(pattern)]){
+      tmp+=(ordValue(genome[i]) << (2*shift) ) ;
+      shift++;
+      if(shift==patternFinalSize){
+	shift=0;
+	appendValue(result,tmp);
+	tmp=0;
+      }
+    }
+  }
+  return result;
+
 }
 
 /*TODO : ne peux tu pas faire une fonction générique :
