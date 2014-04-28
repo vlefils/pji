@@ -127,3 +127,11 @@ int main(int n, char *params[])
 
   return 0;
 }
+
+
+// bioinfo.fr Yass
+// debian package : blast
+
+// formats : blast / blast tabular
+
+
