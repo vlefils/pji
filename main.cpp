@@ -80,6 +80,15 @@ int main(int n, char *params[])
 
     std::cout << "pattern trouve aux position : " << std::endl; 
     setStartMark();
+
+    std::cout << "n° \t\t" 
+	      << "corresp %\t\t" 
+	      << "posH(deb)\t"
+	      << "posH(fin)\t"
+	      << "posV(deb)\t"
+	      << "posV(fin)\t"
+	      << std::endl;
+
     for(offset=0;(offset+(patternSize*repeat))<length(genome2);++offset){
 
       //reset the finder
@@ -94,25 +103,21 @@ int main(int n, char *params[])
 	Seed<Simple> seed(hitH,hitV,partLength);
 	cpt++;
 
-	/*std::cout << "hit : \n"
-		  << "genome 1: " << infix(genome, hitH,
-					   hitH+partLength) << std::endl
-		  << "genome 2: " << infix(genome2, hitV,
-		  hitV+partLength) << std::endl;*/
-	
+       
 	extendSeed(seed,genome , genome2, seqan::EXTEND_BOTH, scoringScheme, 3,
 		   seqan::UnGappedXDrop());
 
 	if(seedSize(seed)>maxSeedLength){
 	  maxSeedLength=seedSize(seed);
-	  std::cout << "allignement maximum : "<<maxSeedLength << std::endl;
-
+	  std::cout << cpt << "\t\t" 
+		    << (double)seedSize(seed)/(double)length(genome)*100 << "%\t\t" 
+		    << beginPositionH(seed) << "\t\t"
+		    << endPositionH(seed) << "\t\t"
+		    << beginPositionV(seed) << "\t\t"
+		    << endPositionV(seed) << "\t\t"
+		    << std::endl;
 	}
-	/*std::cout << "extend : \n"
-		  << "genome 1: " << infix(genome, beginPositionH(seed),
-					   endPositionH(seed)) << std::endl
-		  << "genome 2: " << infix(genome2, beginPositionV(seed),
-		  endPositionV(seed)) << std::endl;*/
+	
 
       }
     }
