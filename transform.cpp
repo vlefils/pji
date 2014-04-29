@@ -93,8 +93,9 @@ template <> Size<DnaString>::Type transformSequence<String<uint16_t> >(String<bo
   }
 }
 
-int getPosition(Size<CharString>::Type patternSize,Size<DnaString>::Type textSize,int position){
-  return ((position*patternSize) % textSize);
+int getPosition(Size<CharString>::Type patternSize,Size<CharString>::Type patternFinalSize,Size<DnaString>::Type textSize,int position){
+  int tmp = position*patternSize;
+  return ((int)((double)tmp/patternFinalSize) % textSize);
 }
 
 template <typename T> T applyPattern(String<Dna> genome,String<bool> pattern,int patternFinalSize){

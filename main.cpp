@@ -87,6 +87,7 @@ int main(int n, char *params[])
 	      << "posH(fin)\t"
 	      << "posV(deb)\t"
 	      << "posV(fin)\t"
+	      << "score\t"
 	      << std::endl;
 
     for(offset=0;(offset+(patternSize*repeat))<length(genome2);++offset){
@@ -98,14 +99,13 @@ int main(int n, char *params[])
 
       while (find(finder,part)){
 	int partLength = patternSize*repeat;
-	Position<Seed<Simple> >::Type hitH = getPosition(patternSize,length(genome),position(finder));
-	Position<Seed<Simple> >::Type hitV = getPosition(patternSize,length(genome2),offset);
+	Position<Seed<Simple> >::Type hitH = getPosition(patternSize,patternFinalSize,length(genome),position(finder));
+	Position<Seed<Simple> >::Type hitV = getPosition(patternSize,patternFinalSize,length(genome2),offset);
 	Seed<Simple> seed(hitH,hitV,partLength);
 	cpt++;
 
        
-	extendSeed(seed,genome , genome2, seqan::EXTEND_BOTH, scoringScheme, 3,
-		   seqan::UnGappedXDrop());
+	extendSeed(seed,genome , genome2, seqan::EXTEND_BOTH,scoringScheme,3,seqan::GappedXDrop());
 
 	if(seedSize(seed)>maxSeedLength){
 	  maxSeedLength=seedSize(seed);
@@ -115,6 +115,7 @@ int main(int n, char *params[])
 		    << endPositionH(seed) << "\t\t"
 		    << beginPositionV(seed) << "\t\t"
 		    << endPositionV(seed) << "\t\t"
+		     /*TODO find score*/ << "\t\t"
 		    << std::endl;
 	}
 	
