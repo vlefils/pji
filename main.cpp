@@ -22,11 +22,13 @@ int main(int n, char *params[])
   Size<CharString>::Type patternSize,patternFinalSize;
 
   // Build reads and genomes
-  String<Dna> genome = readFasFile(params[1]/*"meningitidis_M01-240149.fas"*/);
+  String<Dna> genome1 = readFasFile(params[1]/*"meningitidis_M01-240149.fas"*/);
     
-  String<uint16_t> transformee;
+  String<uint16_t> genome1Transfo;
 
   String<Dna> genome2 = readFasFile(params[2]/*"dna.chromosome.IV.fa"*/);
+
+  String<uint16_t> genome2Transfo;
 
   if(n==4){
     CharString patternString=params[3];
@@ -44,29 +46,29 @@ int main(int n, char *params[])
 
     /******************* Genome 1 transformation ******************/
     setStartMark();
-    transformSequence<String<uint16_t> >(pattern,patternSize,patternFinalSize,genome, transformee);
+    transformSequence<String<uint16_t> >(pattern,patternSize,patternFinalSize,genome1,genome1Transfo);
     setEndMark();
-    std::cout << "sequence transformee : "<< length(transformee) << std::endl;
+    std::cout << "génome 1 transformé : "<< length(genome1Transfo) << std::endl;
     displayDuration();
     
 
     /******************* Index Creation ****************************/
     setStartMark();
-    Index<String<uint16_t> ,FMIndex<> > index(transformee);
+    Index<String<uint16_t> ,FMIndex<> > index(genome1Transfo);
     indexCreate(index);
     setEndMark();
-    std::cout << "sequence indexee" << std::endl;
+    std::cout << "genome 1 indexé" << std::endl;
     displayDuration();
     
 
     /****************** Genome 2 transformation ********************/
     int repeat=4;
-    String<uint16_t> intGenome2;
+    String<uint16_t> genome2transfo;
 
     setStartMark();
-    intGenome2=applyPattern<String<uint16_t> >(genome2,pattern,patternFinalSize);
+    transformSequence<String<uint16_t> >(pattern,patternSize,patternFinalSize,genome2,genome2Transfo);
     setEndMark();
-    std::cout<<"pattern appliqué"<<std::endl;
+    std::cout<<"genome 2 transformé : "<< length(genome2Transfo) <<std::endl;
     displayDuration();
 
 
@@ -90,31 +92,31 @@ int main(int n, char *params[])
 	      << "score\t"
 	      << std::endl;
 
-    for(offset=0;(offset+(patternSize*repeat))<length(genome2);++offset){
+    for(offset=0;offset<length(genome2);++offset){
 
       //reset the finder
       clear(finder);
       
-      part=infix(intGenome2,offset,offset+repeat);
+      part=infix(genome2Transfo,offset,offset+repeat);
 
       while (find(finder,part)){
 	int partLength = patternSize*repeat;
-	Position<Seed<Simple> >::Type hitH = getPosition(patternSize,patternFinalSize,length(genome),position(finder));
+	Position<Seed<Simple> >::Type hitH = getPosition(patternSize,patternFinalSize,length(genome1),position(finder));
 	Position<Seed<Simple> >::Type hitV = getPosition(patternSize,patternFinalSize,length(genome2),offset);
 	Seed<Simple> seed(hitH,hitV,partLength);
 	cpt++;
 
        
-	extendSeed(seed,genome , genome2, seqan::EXTEND_BOTH,scoringScheme,3,seqan::GappedXDrop());
+	extendSeed(seed,genome1 , genome2, seqan::EXTEND_BOTH,scoringScheme,1,seqan::GappedXDrop());
 
 	if(seedSize(seed)>maxSeedLength){
 	  maxSeedLength=seedSize(seed);
 	  std::cout << cpt << "\t\t" 
-		    << (double)seedSize(seed)/(double)length(genome)*100 << "%\t\t" 
-		    << beginPositionH(seed) << "\t\t"
-		    << endPositionH(seed) << "\t\t"
-		    << beginPositionV(seed) << "\t\t"
-		    << endPositionV(seed) << "\t\t"
+		    << (double)seedSize(seed)/(double)length(genome1)*100 << "%\t\t" 
+		    << getPosition(patternSize,patternFinalSize,length(genome1),beginPositionH(seed)) << "\t\t"
+		    << getPosition(patternSize,patternFinalSize,length(genome1),endPositionH(seed)) << "\t\t"
+		    << getPosition(patternSize,patternFinalSize,length(genome2),beginPositionV(seed)) << "\t\t"
+		    << getPosition(patternSize,patternFinalSize,length(genome2),endPositionV(seed)) << "\t\t"
 		     /*TODO find score*/ << "\t\t"
 		    << std::endl;
 	}

@@ -94,53 +94,5 @@ template <> Size<DnaString>::Type transformSequence<String<uint16_t> >(String<bo
 }
 
 int getPosition(Size<CharString>::Type patternSize,Size<CharString>::Type patternFinalSize,Size<DnaString>::Type textSize,int position){
-  int tmp = position*patternSize;
-  return ((int)((double)tmp/patternFinalSize) % textSize);
+  return (position*patternSize) % textSize;
 }
-
-template <typename T> T applyPattern(String<Dna> genome,String<bool> pattern,int patternFinalSize){
-  std::cout<< "type non géré" << std::endl; 
-}
-
-
-template <> String<Dna> applyPattern<String<Dna> >(String<Dna> genome,String<bool> pattern,int patternFinalSize){
-  Size<String<Dna> >::Type i;
-  String<Dna> result;
-
-  for(i=0;i<length(genome);++i){
-    if (pattern[i]) result+=genome[i];
-  }
-
-}
-
-template <> String<uint16_t> applyPattern<String<uint16_t> >(String<Dna> genome,String<bool> pattern,int patternFinalSize){
-  Size<String<uint16_t> >::Type i;
-  String<uint16_t> result;
-  Value<String<uint16_t> >::Type tmp=0;
-  int shift=0;
-
-  for(i=0;i<length(genome);++i){
-    if (pattern[i%length(pattern)]){
-      tmp+=(ordValue(genome[i]) << (2*shift) ) ;
-      shift++;
-      if(shift==patternFinalSize){
-	shift=0;
-	appendValue(result,tmp);
-	tmp=0;
-      }
-    }
-  }
-  return result;
-
-}
-
-/*TODO : ne peux tu pas faire une fonction générique :
-  template <typename TAlphabet, typename TWord> Size<String<TAlphabet> >::Type transformSequence(
-  String<bool> const& pattern,
-  Size<String<TAlphabet> >::Type patternSize,
-  Size<String<TAlphabet> >::Type patternFinalSize,
-  String<TAlphabet> & sequence,
-  String<TWord> & transformee)
-  qui avec n'importe quelle alphabet d'entrée(TAlphabet) et d'alphabet de sortie (TWord) est capable de faire ta transformation ?
-  Ca te permettra de passer à des mots plus court ou plus long (si seqan change son fonctionnement)sans avoir a réécrire completement ta fonction.
-*/
